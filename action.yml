@@ -1,0 +1,5 @@
+name: 'Salesforce Code Analyzer Annotation'
+description: 'An action that creates an annotation for the output of the Salesforce Code Analyzer'
+runs:
+  using: 'node12'
+  main: 'index.js'
