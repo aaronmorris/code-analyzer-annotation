@@ -22,7 +22,7 @@ async function checkFileStartsWithHeader(filePath) {
     fileContent = fileContent.replace(/^\s*\n/gm, '');
 
     if (fileContent.startsWith('#')) {
-      core.info(`File $(filePath) starts with a header`);
+      core.info(`File ${filePath} starts with a header`);
       return true;
     }
     else {
