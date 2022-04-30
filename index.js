@@ -35,7 +35,7 @@ async function checkFileStartsWithHeader(filePath) {
 (async () => {
   try {
     checkFileExistence('README.md');
-    checkFileExistence('LICENSE');
+    // checkFileExistence('LICENSE');
 
     if (await checkFileStartsWithHeader('README.md')) {
 
