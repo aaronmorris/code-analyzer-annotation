@@ -41,7 +41,7 @@ async function checkFileStartsWithHeader(filePath) {
 
       // get token for octokit
       // const token = core.getInput('repo-token');
-      const token = github.token;
+      const token = core.getInput('repo-token');
       core.info(`token: "${token}"`);
       const octokit = new github.getOctokit(token);
 
