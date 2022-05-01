@@ -32,15 +32,21 @@ async function checkFileStartsWithHeader(filePath) {
   });
 }
 
+async function readScannerResults() {
+  const jsonData = require('scanner-results.json');
+  core.info('JSON: ' + jsonData);
+}
+
 (async () => {
   try {
-    checkFileExistence('README.md');
+    await readScannerResults();
+    // checkFileExistence('README.md');
     // checkFileExistence('LICENSE');
 
-    if (await checkFileStartsWithHeader('README.md')) {
-      core.info('File starts with header so no further action is needed.');
-      return;
-    }
+    // if (await checkFileStartsWithHeader('README.md')) {
+    //   core.info('File starts with header so no further action is needed.');
+    //   return;
+    // }
 
     // get token for octokit
     // const token = core.getInput('repo-token');
