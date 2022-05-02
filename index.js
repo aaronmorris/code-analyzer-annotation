@@ -56,6 +56,8 @@ async function readScannerResults() {
     const engineName = engine.engine.toUpperCase();
     const fileName = engine.fileName;
     const annotations = [];
+    core.info('fileName: ' + fileName);
+    core.info('engineName: ' + engineName);
     for (const violation in engine) {
       const annotation = {
         path: fileName,
