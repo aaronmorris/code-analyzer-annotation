@@ -25,7 +25,7 @@ async function readScannerResults() {
   core.info('json: ' + json[0].engine);
 
   for(let engine of json) {
-    core.info('in loop');
+    core.info('next engine loop');
     core.info(engine);
     const engineName = engine.engine.toUpperCase();
     const fileName = engine.fileName;
@@ -33,6 +33,7 @@ async function readScannerResults() {
     core.info('fileName: ' + fileName);
     core.info('engineName: ' + engineName);
     for (let violation of engine.violations) {
+      core.info('next violation');
       const annotation = {
         path: fileName,
         start_line: violation.line ? parseInt(violation.line) : 1,
@@ -52,7 +53,8 @@ async function readScannerResults() {
       core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
-      // annotations.push(annotation);
+      annotations.push(annotation);
+      core.info('annotation pushed');
     }
 
     const check = await octokit.rest.checks.create({
