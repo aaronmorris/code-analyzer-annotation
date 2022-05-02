@@ -43,13 +43,13 @@ async function readScannerResults() {
         end_column: violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
       };
 
-      core.info(annotation.path);
-      core.info(annotation.start_line);
-      core.info(annotation.end_line);
-      core.info(annotation.annotation_level);
-      core.info(annotation.message);
-      core.info(annotation.start_column);
-      core.info(annotation.end_column);
+      core.info('path: ' + annotation.path);
+      core.info('startline: ' + annotation.start_line);
+      core.info('endline: ' + annotation.end_line);
+      core.info('annotationlevel: ' + annotation.annotation_level);
+      core.info('message: ' + annotation.message);
+      core.info('startcolumn: ' + annotation.start_column);
+      core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
       annotations.push(annotation);
