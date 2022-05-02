@@ -1,21 +1,8 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
-const { connected } = require('process');
 
 async function readScannerResults() {
-  const path = core.getInput('path');
-  core.info(`json path: ${core.getInput('path')}`);
-  // const jsonData = require(path);
-  // core.info('JSON: ' + jsonData);
-  const resultData = fs.readFile(path, 'utf-8', function(error, data) {
-    // core.setFailed(`Unable to read file ${path}`);
-    // return;
-  });
-
-  // core.info(resultData);
-  // core.info(JSON.parse(resultData));
-
   const token = core.getInput('repo-token');
   const failOnError = core.getInput('fail-on-error');
   core.info(`token: "${token}"`);
@@ -25,13 +12,10 @@ async function readScannerResults() {
   core.info('json: ' + json[0].engine);
 
   for(let engine of json) {
-    core.info('next engine loop');
-    core.info(engine);
     const engineName = engine.engine.toUpperCase();
     const fileName = engine.fileName;
     const annotations = [];
-    core.info('fileName: ' + fileName);
-    core.info('engineName: ' + engineName);
+
     for (let violation of engine.violations) {
       core.info('next violation');
       const annotation = {
@@ -43,14 +27,6 @@ async function readScannerResults() {
         start_column: violation.column ? parseInt(violation.column) : 1,
         end_column: violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
       };
-
-      core.info('path: ' + annotation.path);
-      core.info('startline: ' + annotation.start_line);
-      core.info('endline: ' + annotation.end_line);
-      core.info('annotationlevel: ' + annotation.annotation_level);
-      core.info('message: ' + annotation.message);
-      core.info('startcolumn: ' + annotation.start_column);
-      core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
       try {
@@ -71,6 +47,8 @@ async function readScannerResults() {
     }
 
     core.info('lets assign those annotations');
+    core.info('failOnError: ' + failOnError);
+    core.info('result: ' + (failOnError ? 'failure' : 'neutral'));
     try {
       const check = await octokit.rest.checks.create({
         owner: github.context.repo.owner,
