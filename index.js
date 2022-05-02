@@ -39,11 +39,18 @@ async function readScannerResults() {
   // core.info('JSON: ' + jsonData);
   const resultData = fs.readFile(path, 'utf-8', function(error, data) {
     core.setFailed(`Unable to read file ${path}`);
-    return;
+    // return;
   });
 
-  core.info(resultData);
-  core.info(JSON.parse(resultData));
+  // core.info(resultData);
+  // core.info(JSON.parse(resultData));
+
+  const json = JSON.parse(core.getInput('json'));
+  core.info('json: ' + json);
+
+  for(var violation in json.jsonData) {
+    core.info('engine: ' + violation.json);
+ }
 }
 
 (async () => {
