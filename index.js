@@ -38,7 +38,7 @@ async function readScannerResults() {
         start_line: violation.line ? parseInt(violation.line) : 1,
         end_line: violation.endLine ? parseInt(violation.endLine) : parseInt(violation.line) ,
         annotation_level: 'failure',
-        message: `${violation.message} ${violation.url}`,
+        message: `${violation.message.trimStart()} ${violation.url}`,
         start_column: violation.column ? parseInt(violation.column) : 1,
         end_column: violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
       };
@@ -49,7 +49,7 @@ async function readScannerResults() {
       core.info('annotationlevel: ' + annotation.annotation_level);
       core.info('message: ' + annotation.message);
       core.info('startcolumn: ' + annotation.start_column);
-      // core.info('endcolumn: ' + annotation.end_column);
+      core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
       annotations.push(annotation);
