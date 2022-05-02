@@ -52,7 +52,7 @@ async function readScannerResults() {
       core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
-      annotations.push(annotation);
+      // annotations.push(annotation);
     }
 
     const check = await octokit.rest.checks.create({
