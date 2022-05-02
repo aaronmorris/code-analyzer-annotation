@@ -48,6 +48,20 @@ async function readScannerResults() {
 
     core.info('lets assign those annotations');
     core.info('failOnError: ' + failOnError);
+    if (failOnError) {
+      core.info('its true');
+    }
+    else {
+      core.info('its false');
+    }
+
+    if (!failOnError) {
+      core.info('its false');
+    }
+    else {
+      core.info('its true');
+    }
+
     core.info('result: ' + (failOnError ? 'failure' : 'neutral'));
     try {
       const check = await octokit.rest.checks.create({
