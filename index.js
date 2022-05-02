@@ -49,7 +49,7 @@ async function readScannerResults() {
       core.info('annotationlevel: ' + annotation.annotation_level);
       core.info('message: ' + annotation.message);
       core.info('startcolumn: ' + annotation.start_column);
-      core.info('endcolumn: ' + annotation.end_column);
+      // core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
       annotations.push(annotation);
