@@ -38,7 +38,7 @@ async function readScannerResults() {
   // const jsonData = require(path);
   // core.info('JSON: ' + jsonData);
   const resultData = fs.readFile(path, 'utf-8', function(error, data) {
-    core.setFailed(`Unable to read file ${path}`);
+    // core.setFailed(`Unable to read file ${path}`);
     // return;
   });
 
@@ -70,6 +70,14 @@ async function readScannerResults() {
         start_column: violation.column ? parseInt(violation.column) : 1,
         end_column: violation.endColumn ? parseInt(violation.endColumn) : 1
       };
+
+      core.info(annotation.path);
+      core.info(annotation.start_line);
+      core.info(annotation.end_line);
+      core.info(annotation.annotation_level);
+      core.info(annotation.message);
+      core.info(annotation.start_column);
+      core.info(annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
       annotations.push(annotation);
