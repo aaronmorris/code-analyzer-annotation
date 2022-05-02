@@ -52,13 +52,14 @@ async function readScannerResults() {
   const json = JSON.parse(core.getInput('json'));
   core.info('json: ' + json[0].engine);
 
-  for(const engine in json.jsonData) {
+  for(let engine in json) {
+    core.info('in loop');
     const engineName = engine.engine.toUpperCase();
     const fileName = engine.fileName;
     const annotations = [];
     core.info('fileName: ' + fileName);
     core.info('engineName: ' + engineName);
-    for (const violation in engine) {
+    for (let violation in engine) {
       const annotation = {
         path: fileName,
         start_line: violation.line,
