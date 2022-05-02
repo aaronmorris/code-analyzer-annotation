@@ -62,18 +62,18 @@ async function readScannerResults() {
     core.info('engineName: ' + engineName);
     for (let violation of engine.violations) {
       const annotation = {
-        // path: fileName,
-        path: 'README.md',
-        // start_line: parseInt(violation.line),
-        // end_line: parseInt(violation.endLine),
+        path: fileName,
+        // path: 'README.md',
+        start_line: parseInt(violation.line),
+        end_line: parseInt(violation.endLine),
         start_line: 1,
         end_line: 1,
         annotation_level: 'failure',
         message: `${violation.message} ${violation.url}`,
-        // start_column: parseInt(violation.column),
-        // end_column: parseInt(violation.endColumn)
-        start_column: 1,
-        end_column: 1
+        start_column: parseInt(violation.column),
+        end_column: parseInt(violation.endColumn)
+        // start_column: 1,
+        // end_column: 1
       };
 
       core.info(`Annotation: ${annotation}`);
@@ -111,36 +111,34 @@ async function readScannerResults() {
 
     // get token for octokit
     // const token = core.getInput('repo-token');
-    const token = core.getInput('repo-token');
-    core.info(`token: "${token}"`);
-    const octokit = new github.getOctokit(token);
+    // const token = core.getInput('repo-token');
+    // core.info(`token: "${token}"`);
+    // const octokit = new github.getOctokit(token);
 
     // call octokit to create a check with annotation and details
-    const check = await octokit.rest.checks.create({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      name: 'Readme Validator',
-      head_sha: github.context.sha,
-      status: 'completed',
-      conclusion: 'failure',
-      output: {
-        title: 'README.md must start with a title',
-        summary: 'Please use markdown syntax to create a title',
-        annotations: [
-          {
-            path: 'README.md',
-            start_line: 1,
-            end_line: 1,
-            annotation_level: 'failure',
-            message: 'README.md must start with a header',
-            start_column: 1,
-            end_column: 1
-          }
-        ]
-      }
-    });
-
-    core.info('Annotation added');
+    // const check = await octokit.rest.checks.create({
+    //   owner: github.context.repo.owner,
+    //   repo: github.context.repo.repo,
+    //   name: 'Readme Validator',
+    //   head_sha: github.context.sha,
+    //   status: 'completed',
+    //   conclusion: 'failure',
+    //   output: {
+    //     title: 'README.md must start with a title',
+    //     summary: 'Please use markdown syntax to create a title',
+    //     annotations: [
+    //       {
+    //         path: 'README.md',
+    //         start_line: 1,
+    //         end_line: 1,
+    //         annotation_level: 'failure',
+    //         message: 'README.md must start with a header',
+    //         start_column: 1,
+    //         end_column: 1
+    //       }
+    //     ]
+    //   }
+    // });
   }
   catch (error) {
     core.setFailed(error.message);
