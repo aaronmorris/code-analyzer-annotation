@@ -88,7 +88,7 @@ async function readScannerResults() {
     }
     catch(error){
       core.debug('format error');
-      for (const annotation in annotations) {
+      for (const annotation of annotations) {
         core.info('annotation.start_line: ' + annotation.start_line);
         // sometimes the line and column numbers cause issues:
         annotation.start_line = 1;
