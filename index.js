@@ -3,35 +3,6 @@ const github = require('@actions/github');
 const fs = require("fs");
 const { connected } = require('process');
 
-async function checkFileExistence(path) {
-  return fs.promises.access(path, fs.constants.F_OK)
-  .then(() => {
-    core.info(`${path} exists`);
-    return true;
-  })
-  .catch(() => {
-    core.setFailed(`${path} does not exist`);
-    return false;
-  });
-}
-
-async function checkFileStartsWithHeader(filePath) {
-  return fs.promises.readFile(filePath, 'utf8')
-  .then(fileContent => {
-    // remove all empty lines at the beginning of the file
-    fileContent = fileContent.replace(/^\s*\n/gm, '');
-
-    if (fileContent.startsWith('#')) {
-      core.info(`File ${filePath} starts with a header`);
-      return true;
-    }
-    else {
-      core.setFailed(`File ${filePath} does not start with a header`);
-      return false;
-    }
-  });
-}
-
 async function readScannerResults() {
   const path = core.getInput('path');
   core.info(`json path: ${core.getInput('path')}`);
@@ -46,6 +17,7 @@ async function readScannerResults() {
   // core.info(JSON.parse(resultData));
 
   const token = core.getInput('repo-token');
+  const failOnError = core.getInput('fail-on-error');
   core.info(`token: "${token}"`);
   const octokit = new github.getOctokit(token);
 
@@ -89,7 +61,7 @@ async function readScannerResults() {
       name: `${engineName} Violation`,
       head_sha: github.context.sha,
       status: 'completed',
-      conclusion: 'failure',
+      conclusion: failOnError ? 'failure' : 'neutral',
       output: {
         title: `${engineName} Violation`,
         summary: `Please review the following ${engineName} Violation`,

@@ -4,10 +4,15 @@ runs:
   using: 'node12'
   main: 'index.js'
 inputs:
+  fail-on-error:
+    type: boolean
+    description: Indicate whether to have a failure annotation when there are rrors
+    required: true
+    default: true
   path:
     type: string
     description: path the results json file
-    required: true
+    required: false
   json:
     type: string
     description: json data from scanner results
