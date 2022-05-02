@@ -36,12 +36,12 @@ async function readScannerResults() {
       core.info('next violation');
       const annotation = {
         path: fileName,
-        start_line: 1, //violation.line ? parseInt(violation.line) : 1,
-        end_line: 1, //violation.endLine ? parseInt(violation.endLine) : parseInt(violation.line) ,
+        start_line: violation.line ? parseInt(violation.line) : 1,
+        end_line: violation.endLine ? parseInt(violation.endLine) : parseInt(violation.line) ,
         annotation_level: 'failure',
         message: `${violation.message.trim()}\n${violation.ruleName}\n${violation.url}`,
-        start_column: 1, //violation.column ? parseInt(violation.column) : 1,
-        end_column: 1 //violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
+        start_column: violation.column ? parseInt(violation.column) : 1,
+        end_column: violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
       };
 
       core.info('path: ' + annotation.path);
