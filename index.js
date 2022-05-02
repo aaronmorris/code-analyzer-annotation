@@ -45,12 +45,45 @@ async function readScannerResults() {
   // core.info(resultData);
   // core.info(JSON.parse(resultData));
 
+  const token = core.getInput('repo-token');
+  core.info(`token: "${token}"`);
+  const octokit = new github.getOctokit(token);
+
   const json = JSON.parse(core.getInput('json'));
   core.info('json: ' + json[0].engine);
 
-  for(var violation in json.jsonData) {
-    core.info('in loop');
-    core.info('engine: ' + violation.engine);
+  for(const engine in json.jsonData) {
+    const engineName = engine.engine.toUpperCase();
+    const fileName = engine.fileName;
+    const annotations = [];
+    for (const violation in engine) {
+      const annotation = {
+        path: fileName,
+        start_line: violation.line,
+        end_line: violation.endLine,
+        annotation_level: 'failure',
+        message: `${violation.message} ${violation.url}`,
+        start_column: violation.column,
+        end_column: violation.endColumn
+      };
+
+      core.info(`Annotation: ${annotation}`);
+      annotations.push(annotation);
+    }
+
+    const check = await octokit.rest.checks.create({
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+      name: `${engineName} Violation`,
+      head_sha: github.context.sha,
+      status: 'completed',
+      conclusion: 'failure',
+      output: {
+        title: `${engineName} Violation`,
+        summary: `Please review the following ${engineName} Violation`,
+        annotations: annotations
+      }
+    });
   }
 
   core.info('end readScannerResults');
