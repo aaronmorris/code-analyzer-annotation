@@ -4,7 +4,7 @@ const fs = require("fs");
 
 async function readScannerResults() {
   const token = core.getInput('repo-token');
-  const failOnError = core.getInput('fail-on-error');
+  const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
   core.info(`token: "${token}"`);
   const octokit = new github.getOctokit(token);
 
