@@ -46,11 +46,14 @@ async function readScannerResults() {
   // core.info(JSON.parse(resultData));
 
   const json = JSON.parse(core.getInput('json'));
-  core.info('json: ' + json);
+  core.info('json: ' + json[0].engine);
 
   for(var violation in json.jsonData) {
-    core.info('engine: ' + violation.json);
- }
+    core.info('in loop');
+    core.info('engine: ' + violation.engine);
+  }
+
+  core.info('end readScannerResults');
 }
 
 (async () => {
