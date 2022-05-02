@@ -84,11 +84,11 @@ async function readScannerResults() {
         core.info('annotation.start_line: ' + annotation.start_line);
         // sometimes the line and column numbers cause issues:
 
-        annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so they were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
+        annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end column value has been modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
         // annotation.start_line = 1;
         // annotation.end_line = 1;
-        annotation.end_line = annotation.start_line;
+        // annotation.end_line = annotation.start_line;
         // annotation.start_column = 1;
         // annotation.end_column = 1;
         annotation.end_column = annotation.start_column;
