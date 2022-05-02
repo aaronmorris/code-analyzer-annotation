@@ -57,19 +57,25 @@ async function readScannerResults() {
       core.info('annotation pushed');
     }
 
-    const check = await octokit.rest.checks.create({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      name: `${engineName} Violation`,
-      head_sha: github.context.sha,
-      status: 'completed',
-      conclusion: failOnError ? 'failure' : 'neutral',
-      output: {
-        title: `${engineName} Violation`,
-        summary: `Please review the following ${engineName} Violation`,
-        annotations: annotations
-      }
-    });
+    core.info('lets assign those annotations');
+    try {
+      const check = await octokit.rest.checks.create({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        name: `${engineName} Violation`,
+        head_sha: github.context.sha,
+        status: 'completed',
+        conclusion: failOnError ? 'failure' : 'neutral',
+        output: {
+          title: `${engineName} Violation`,
+          summary: `Please review the following ${engineName} Violation`,
+          annotations: annotations
+        }
+      });
+    }
+    catch(error){
+      core.info('Failed to created annotation: ' + error.message);
+    }
   }
 
   core.info('end readScannerResults');
