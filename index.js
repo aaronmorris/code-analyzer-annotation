@@ -54,6 +54,7 @@ async function readScannerResults() {
 
   for(let engine in json) {
     core.info('in loop');
+    core.info(engine);
     const engineName = engine.engine.toUpperCase();
     const fileName = engine.fileName;
     const annotations = [];
