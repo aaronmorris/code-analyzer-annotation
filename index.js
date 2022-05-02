@@ -52,7 +52,7 @@ async function readScannerResults() {
   const json = JSON.parse(core.getInput('json'));
   core.info('json: ' + json[0].engine);
 
-  for(let engine in json) {
+  for(let engine of json) {
     core.info('in loop');
     core.info(engine);
     const engineName = engine.engine.toUpperCase();
@@ -60,7 +60,7 @@ async function readScannerResults() {
     const annotations = [];
     core.info('fileName: ' + fileName);
     core.info('engineName: ' + engineName);
-    for (let violation in engine) {
+    for (let violation of engine) {
       const annotation = {
         path: fileName,
         start_line: violation.line,
