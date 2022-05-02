@@ -53,7 +53,18 @@ async function readScannerResults() {
       core.info('endcolumn: ' + annotation.end_column);
 
       core.info(`Annotation: ${annotation}`);
-      annotations.push(annotation);
+      try {
+        annotations.push(annotation);
+      }
+      catch (firstError) {
+        core.info('first error');
+        // sometimes the line and column numbers cause issues:
+        annotation.start_line = 1;
+        annotation.end_line = 1;
+        annotation.start_column = 1;
+        annotation.end_column = 1;
+        annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
+      }
       core.info('annotation pushed');
     }
 
