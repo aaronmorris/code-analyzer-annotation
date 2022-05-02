@@ -64,11 +64,11 @@ async function readScannerResults() {
       const annotation = {
         path: fileName,
         start_line: violation.line ? parseInt(violation.line) : 1,
-        end_line: violation.endLine ? parseInt(violation.endLine) : 1,
+        end_line: violation.endLine ? parseInt(violation.endLine) : parseInt(violation.line) ,
         annotation_level: 'failure',
         message: `${violation.message} ${violation.url}`,
         start_column: violation.column ? parseInt(violation.column) : 1,
-        end_column: violation.endColumn ? parseInt(violation.endColumn) : 1
+        end_column: violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
       };
 
       core.info(annotation.path);
