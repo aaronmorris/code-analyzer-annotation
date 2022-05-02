@@ -4,6 +4,10 @@ runs:
   using: 'node12'
   main: 'index.js'
 inputs:
+  path:
+    type: string
+    description: path the results json file
+    required: true
   repo-token:
     type: string
     description: Github personal access token
