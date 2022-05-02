@@ -59,13 +59,13 @@ async function readScannerResults() {
       catch (firstError) {
         core.info('first error');
         // sometimes the line and column numbers cause issues:
-        annotation.start_line = 1;
-        annotation.end_line = 1;
-        annotation.start_column = 1;
-        annotation.end_column = 1;
-        annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
+        // annotation.start_line = 1;
+        // annotation.end_line = 1;
+        // annotation.start_column = 1;
+        // annotation.end_column = 1;
+        // annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
 
-        annotations.push(annotation);
+        // annotations.push(annotation);
       }
       core.info('annotation pushed');
     }
@@ -87,13 +87,16 @@ async function readScannerResults() {
       });
     }
     catch(error){
+      core.debug('format error');
       for (const annotation in annotations) {
+        core.info('annotation.start_line: ' + annotation.start_line);
         // sometimes the line and column numbers cause issues:
         annotation.start_line = 1;
         annotation.end_line = 1;
         annotation.start_column = 1;
         annotation.end_column = 1;
         annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
+        core.info('annotation.start_line: ' + annotation.start_line);
       }
 
       try {
