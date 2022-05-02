@@ -64,14 +64,14 @@ async function readScannerResults() {
       const annotation = {
         path: fileName,
         // path: 'README.md',
-        start_line: parseInt(violation.line),
-        end_line: parseInt(violation.endLine),
+        start_line: violation.line ? parseInt(violation.line) : 1,
+        end_line: violation.endLine ? parseInt(violation.endLine) : 1,
         start_line: 1,
         end_line: 1,
         annotation_level: 'failure',
         message: `${violation.message} ${violation.url}`,
-        start_column: parseInt(violation.column),
-        end_column: parseInt(violation.endColumn)
+        start_column: violation.column ? parseInt(violation.column) : 1,
+        end_column: violation.endColumn ? parseInt(violation.endColumn) : 1
         // start_column: 1,
         // end_column: 1
       };
