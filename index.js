@@ -103,7 +103,7 @@ async function readScannerResults() {
           name: `${engineName} Violation`,
           head_sha: github.context.sha,
           status: 'completed',
-          conclusion: failOnError ? 'failure' : 'neutral',
+          conclusion: failOnError ? 'failure' : 'warning',
           output: {
             title: `${engineName} Violation`,
             summary: `Please review the following ${engineName} Violation`,
