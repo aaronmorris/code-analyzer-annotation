@@ -63,12 +63,12 @@ async function readScannerResults() {
     for (let violation of engine.violations) {
       const annotation = {
         path: fileName,
-        start_line: violation.line,
-        end_line: violation.endLine,
+        start_line: parseInt(violation.line),
+        end_line: parseInt(violation.endLine),
         annotation_level: 'failure',
         message: `${violation.message} ${violation.url}`,
-        start_column: violation.column,
-        end_column: violation.endColumn
+        start_column: parseInt(violation.column),
+        end_column: parseInt(violation.endColumn)
       };
 
       core.info(`Annotation: ${annotation}`);
