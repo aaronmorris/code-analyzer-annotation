@@ -86,10 +86,12 @@ async function readScannerResults() {
 
         annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so they will be incorrect.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
-        annotation.start_line = 1;
-        annotation.end_line = 1;
-        annotation.start_column = 1;
-        annotation.end_column = 1;
+        // annotation.start_line = 1;
+        // annotation.end_line = 1;
+        annotation.end_line = annotation.start_line;
+        // annotation.start_column = 1;
+        // annotation.end_column = 1;
+        annotation.end_column = annotation.start_column;
 
         core.info('annotation.start_line: ' + annotation.start_line);
       }
