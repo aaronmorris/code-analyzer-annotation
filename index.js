@@ -35,8 +35,15 @@ async function checkFileStartsWithHeader(filePath) {
 async function readScannerResults() {
   const path = core.getInput('path');
   core.info(`json path: ${core.getInput('path')}`);
-  const jsonData = require(path);
+  // const jsonData = require(path);
   // core.info('JSON: ' + jsonData);
+  const resultData = fs.readFile(path, 'utf-8', function(error, data) {
+    core.setFailed(`Unable to read file ${path}`);
+    return;
+  });
+
+  core.info(resultData);
+  core.info(JSON.parse(resultData));
 }
 
 (async () => {
