@@ -64,6 +64,8 @@ async function readScannerResults() {
         annotation.start_column = 1;
         annotation.end_column = 1;
         annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
+
+        annotations.push(annotation);
       }
       core.info('annotation pushed');
     }
@@ -85,7 +87,33 @@ async function readScannerResults() {
       });
     }
     catch(error){
-      core.error('Failed to created annotation: ' + error.message);
+      for (const annotation in annotations) {
+        // sometimes the line and column numbers cause issues:
+        annotation.start_line = 1;
+        annotation.end_line = 1;
+        annotation.start_column = 1;
+        annotation.end_column = 1;
+        annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
+      }
+
+      try {
+        const check = await octokit.rest.checks.create({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          name: `${engineName} Violation`,
+          head_sha: github.context.sha,
+          status: 'completed',
+          conclusion: failOnError ? 'failure' : 'neutral',
+          output: {
+            title: `${engineName} Violation`,
+            summary: `Please review the following ${engineName} Violation`,
+            annotations: annotations
+          }
+        });
+      }
+      catch (finalError) {
+        core.error('Failed to created annotation: ' + finalError.message);
+      }
     }
   }
 
