@@ -60,7 +60,7 @@ async function readScannerResults() {
     const annotations = [];
     core.info('fileName: ' + fileName);
     core.info('engineName: ' + engineName);
-    for (let violation of engine) {
+    for (let violation of engine.violations) {
       const annotation = {
         path: fileName,
         start_line: violation.line,
