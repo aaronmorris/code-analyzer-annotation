@@ -87,15 +87,18 @@ async function readScannerResults() {
       });
     }
     catch(error){
-      core.debug('format error');
+      core.info('format error');
       for (const annotation of annotations) {
         core.info('annotation.start_line: ' + annotation.start_line);
         // sometimes the line and column numbers cause issues:
+
+        annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so they will be incorrect.\nOriginal Values:\nStart Line: ${annotation.start_line}\End Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\End Column: ${annotation.end_column}\n`;
+
         annotation.start_line = 1;
         annotation.end_line = 1;
         annotation.start_column = 1;
         annotation.end_column = 1;
-        annotation.message = `There was an issue with the line details of the annotation so they will be incorrect.\n${annotation.message}`;
+
         core.info('annotation.start_line: ' + annotation.start_line);
       }
 
