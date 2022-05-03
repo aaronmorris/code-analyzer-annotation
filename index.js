@@ -45,12 +45,12 @@ async function readScannerResults() {
       });
     }
     catch(error){
-      core.error('Failed to create annotations.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.');
+      core.warning('Failed to create annotations.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.');
       for (const annotation of annotations) {
         annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end line and end column values were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
         annotation.end_line = annotation.start_line;
-        annotation.end_column = annotation.start_column;
+        // annotation.end_column = annotation.start_column;
       }
 
       try {
