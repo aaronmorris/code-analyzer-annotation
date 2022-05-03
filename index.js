@@ -1,86 +1,85 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
-const { connected } = require('process');
-
-async function checkFileExistence(path) {
-  return fs.promises.access(path, fs.constants.F_OK)
-  .then(() => {
-    core.info(`${path} exists`);
-    return true;
-  })
-  .catch(() => {
-    core.setFailed(`${path} does not exist`);
-    return false;
-  });
-}
-
-async function checkFileStartsWithHeader(filePath) {
-  return fs.promises.readFile(filePath, 'utf8')
-  .then(fileContent => {
-    // remove all empty lines at the beginning of the file
-    fileContent = fileContent.replace(/^\s*\n/gm, '');
-
-    if (fileContent.startsWith('#')) {
-      core.info(`File ${filePath} starts with a header`);
-      return true;
-    }
-    else {
-      core.setFailed(`File ${filePath} does not start with a header`);
-      return false;
-    }
-  });
-}
 
 async function readScannerResults() {
-  core.info(`json path: ${core.getInput('path')}`);
-  // const jsonData = require('scanner-results.json');
-  // core.info('JSON: ' + jsonData);
+  // booleans still come across as strings so convert to an actual boolean
+  const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
+  const token = core.getInput('repo-token');
+  const json = JSON.parse(core.getInput('json'));
+
+  const octokit = new github.getOctokit(token);
+
+  for(let engine of json) {
+    const engineName = engine.engine.toUpperCase();
+    const fileName = engine.fileName;
+    const annotations = [];
+
+    for (let violation of engine.violations) {
+      const annotation = {
+        path: fileName,
+        start_line: violation.line ? parseInt(violation.line) : 1,
+        end_line: violation.endLine ? parseInt(violation.endLine) : parseInt(violation.line) ,
+        annotation_level: 'failure',
+        message: `${violation.message.trim()}\n${violation.ruleName}\n${violation.url}`,
+        start_column: violation.column ? parseInt(violation.column) : 1,
+        end_column: violation.endColumn ? parseInt(violation.endColumn) : parseInt(violation.column)
+      };
+
+      annotations.push(annotation);
+    }
+
+    try {
+      const check = await octokit.rest.checks.create({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        name: `${engineName} Violation`,
+        head_sha: github.context.sha,
+        status: 'completed',
+        conclusion: failOnError ? 'failure' : 'neutral',
+        output: {
+          title: `${engineName} Violation`,
+          summary: `Please review the following ${engineName} Violation`,
+          annotations: annotations
+        }
+      });
+    }
+    catch(error){
+      core.error('Failed to create annotations.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.');
+      for (const annotation of annotations) {
+        annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end line and end column values were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
+
+        annotation.end_line = annotation.start_line;
+        annotation.end_column = annotation.start_column;
+      }
+
+      try {
+        const check = await octokit.rest.checks.create({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          name: `${engineName} Violation`,
+          head_sha: github.context.sha,
+          status: 'completed',
+          conclusion: failOnError ? 'failure' : 'neutral',
+          output: {
+            title: `${engineName} Violation`,
+            summary: `Please review the following ${engineName} Violation`,
+            annotations: annotations
+          }
+        });
+      }
+      catch (finalError) {
+        core.error('Failed to created annotation: ' + finalError.message);
+      }
+    }
+  }
+
+  core.info('end readScannerResults');
 }
 
 (async () => {
   try {
     await readScannerResults();
-    // checkFileExistence('README.md');
-    // checkFileExistence('LICENSE');
-
-    // if (await checkFileStartsWithHeader('README.md')) {
-    //   core.info('File starts with header so no further action is needed.');
-    //   return;
-    // }
-
-    // get token for octokit
-    // const token = core.getInput('repo-token');
-    const token = core.getInput('repo-token');
-    core.info(`token: "${token}"`);
-    const octokit = new github.getOctokit(token);
-
-    // call octokit to create a check with annotation and details
-    const check = await octokit.rest.checks.create({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      name: 'Readme Validator',
-      head_sha: github.context.sha,
-      status: 'completed',
-      conclusion: 'failure',
-      output: {
-        title: 'README.md must start with a title',
-        summary: 'Please use markdown syntax to create a title',
-        annotations: [
-          {
-            path: 'README.md',
-            start_line: 1,
-            end_line: 1,
-            annotation_level: 'failure',
-            message: 'README.md must start with a header',
-            start_column: 1,
-            end_column: 1
-          }
-        ]
-      }
-    });
-
-    core.info('Annotation added');
   }
   catch (error) {
     core.setFailed(error.message);
