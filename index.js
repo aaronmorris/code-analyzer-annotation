@@ -2,6 +2,23 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
 
+async function createAnnotation(annotations, engineName, failOnError) {
+  const octokit = new github.getOctokit(token);
+  const check = await octokit.rest.checks.create({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    name: `${engineName} Violation`,
+    head_sha: github.context.sha,
+    status: 'completed',
+    conclusion: failOnError ? 'failure' : 'neutral',
+    output: {
+      title: `${engineName} Violation`,
+      summary: `Please review the following ${engineName} Violation`,
+      annotations: annotations
+    }
+  });
+}
+
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
@@ -12,6 +29,7 @@ async function readScannerResults() {
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
+    core.log(`Processing results for the ${engineName} engine.`);
     const fileName = engine.fileName;
     const annotations = [];
 
@@ -30,46 +48,62 @@ async function readScannerResults() {
     }
 
     try {
-      const check = await octokit.rest.checks.create({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        name: `${engineName} Violation`,
-        head_sha: github.context.sha,
-        status: 'completed',
-        conclusion: failOnError ? 'failure' : 'neutral',
-        output: {
-          title: `${engineName} Violation`,
-          summary: `Please review the following ${engineName} Violation`,
-          annotations: annotations
-        }
-      });
+      // const check = await octokit.rest.checks.create({
+      //   owner: github.context.repo.owner,
+      //   repo: github.context.repo.repo,
+      //   name: `${engineName} Violation`,
+      //   head_sha: github.context.sha,
+      //   status: 'completed',
+      //   conclusion: failOnError ? 'failure' : 'neutral',
+      //   output: {
+      //     title: `${engineName} Violation`,
+      //     summary: `Please review the following ${engineName} Violation`,
+      //     annotations: annotations
+      //   }
+      // });
+      await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
       core.warning('Failed to create annotations.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.');
       for (const annotation of annotations) {
         annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end line and end column values were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
-        annotation.end_line = annotation.start_line;
-        annotation.end_column = annotation.start_column;
+        // annotation.end_line = annotation.start_line;
+        // annotation.end_column = annotation.start_column;
       }
 
       try {
-        const check = await octokit.rest.checks.create({
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          name: `${engineName} Violation`,
-          head_sha: github.context.sha,
-          status: 'completed',
-          conclusion: failOnError ? 'failure' : 'neutral',
-          output: {
-            title: `${engineName} Violation`,
-            summary: `Please review the following ${engineName} Violation`,
-            annotations: annotations
-          }
-        });
+        // const check = await octokit.rest.checks.create({
+        //   owner: github.context.repo.owner,
+        //   repo: github.context.repo.repo,
+        //   name: `${engineName} Violation`,
+        //   head_sha: github.context.sha,
+        //   status: 'completed',
+        //   conclusion: failOnError ? 'failure' : 'neutral',
+        //   output: {
+        //     title: `${engineName} Violation`,
+        //     summary: `Please review the following ${engineName} Violation`,
+        //     annotations: annotations
+        //   }
+        // });
+        await createAnnotation(annotations, engineName, failOnError);
       }
       catch (finalError) {
         core.error('Failed to created annotation: ' + finalError.message);
+        // const check = await octokit.rest.checks.create({
+        //   owner: github.context.repo.owner,
+        //   repo: github.context.repo.repo,
+        //   name: `${engineName} Violation`,
+        //   head_sha: github.context.sha,
+        //   status: 'completed',
+        //   conclusion: failOnError ? 'failure' : 'neutral',
+        //   output: {
+        //     title: `${engineName} Violation`,
+        //     summary: `There were ${engineName} Violation, but they couldn't be added as annotations.  Please review the artifacts for details.`,
+        //     annotations: []
+        //   }
+        // });
+        await createAnnotation([]], engineName, failOnError);
       }
     }
   }
