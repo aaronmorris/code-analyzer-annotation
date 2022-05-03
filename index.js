@@ -3,6 +3,7 @@ const github = require('@actions/github');
 const fs = require("fs");
 
 async function createAnnotation(annotations, engineName, failOnError) {
+  const token = core.getInput('repo-token');
   const octokit = new github.getOctokit(token);
   const check = await octokit.rest.checks.create({
     owner: github.context.repo.owner,
@@ -22,10 +23,10 @@ async function createAnnotation(annotations, engineName, failOnError) {
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
-  const token = core.getInput('repo-token');
+  // const token = core.getInput('repo-token');
   const json = JSON.parse(core.getInput('json'));
 
-  const octokit = new github.getOctokit(token);
+  // const octokit = new github.getOctokit(token);
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
