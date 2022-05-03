@@ -49,7 +49,7 @@ async function readScannerResults() {
       await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
-      core.warning('Failed to create annotations on first attempt.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.');
+      core.warning(`Failed to create annotations on first attempt for the ${engineName} Engine.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.`);
       for (const annotation of annotations) {
         annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end line and end column values were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
