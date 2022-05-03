@@ -104,7 +104,14 @@ async function readScannerResults() {
         //     annotations: []
         //   }
         // });
-        await createAnnotation(null, engineName, failOnError);
+        for (const annotation of annotations) { {
+          delete annotation.start_line;
+          delete annotation.end_line;
+          delete annotation.start_column;
+          delete annotation.end_column;
+        }
+
+        await createAnnotation(annotations, engineName, failOnError);
       }
     }
   }
