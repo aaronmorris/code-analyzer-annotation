@@ -104,7 +104,14 @@ async function readScannerResults() {
         //     annotations: []
         //   }
         // });
-        core.setFailed(`Failed to created annotation for ${engineName} Engine: ${finalError.message});
+        for (const annotation of annotations) {
+          delete annotation.start_line;
+          delete annotation.end_line;
+          delete annotation.start_column;
+          delete annotation.end_column;
+        }
+
+        await createAnnotation(annotations, engineName, failOnError);
       }
     }
   }
