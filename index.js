@@ -74,44 +74,10 @@ async function readScannerResults() {
       }
 
       try {
-        // const check = await octokit.rest.checks.create({
-        //   owner: github.context.repo.owner,
-        //   repo: github.context.repo.repo,
-        //   name: `${engineName} Violation`,
-        //   head_sha: github.context.sha,
-        //   status: 'completed',
-        //   conclusion: failOnError ? 'failure' : 'neutral',
-        //   output: {
-        //     title: `${engineName} Violation`,
-        //     summary: `Please review the following ${engineName} Violation`,
-        //     annotations: annotations
-        //   }
-        // });
         await createAnnotation(annotations, engineName, failOnError);
       }
       catch (finalError) {
-        core.error('Failed to created annotation: ' + finalError.message);
-        // const check = await octokit.rest.checks.create({
-        //   owner: github.context.repo.owner,
-        //   repo: github.context.repo.repo,
-        //   name: `${engineName} Violation`,
-        //   head_sha: github.context.sha,
-        //   status: 'completed',
-        //   conclusion: failOnError ? 'failure' : 'neutral',
-        //   output: {
-        //     title: `${engineName} Violation`,
-        //     summary: `There were ${engineName} Violation, but they couldn't be added as annotations.  Please review the artifacts for details.`,
-        //     annotations: []
-        //   }
-        // });
-        for (const annotation of annotations) {
-          delete annotation.start_line;
-          delete annotation.end_line;
-          delete annotation.start_column;
-          delete annotation.end_column;
-        }
-
-        await createAnnotation(annotations, engineName, failOnError);
+        core.error(`Failed to created annotation for the ${engineName} Engine:\n${finalError.message}`);
       }
     }
   }
