@@ -103,7 +103,7 @@ async function readScannerResults() {
         //     annotations: []
         //   }
         // });
-        await createAnnotation([]], engineName, failOnError);
+        await createAnnotation([], engineName, failOnError);
       }
     }
   }
