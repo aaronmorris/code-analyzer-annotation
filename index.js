@@ -29,7 +29,7 @@ async function readScannerResults() {
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
-    core.log(`Processing results for the ${engineName} engine.`);
+    core.info(`Processing results for the ${engineName} engine.`);
     const fileName = engine.fileName;
     const annotations = [];
 
