@@ -23,7 +23,6 @@ async function createAnnotation(annotations, engineName, failOnError) {
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
-  core.info(core.getInput('json'));
   const json = JSON.parse(core.getInput('json'));
 
   for(let engine of json) {
@@ -32,6 +31,7 @@ async function readScannerResults() {
     const fileName = engine.fileName;
     const annotations = [];
 
+    core.info(`${engine.violations.length} violation(s) for ${engineName}`)
     for (let violation of engine.violations) {
       const annotation = {
         path: fileName,
@@ -44,10 +44,11 @@ async function readScannerResults() {
       };
 
       annotations.push(annotation);
+      core.info(annotation);
     }
 
     try {
-      core.debug('tring to create annotation for ', annotations);
+      core.info('Trying to create annotation for ', annotations);
       await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
@@ -57,9 +58,11 @@ async function readScannerResults() {
 
         annotation.end_line = annotation.start_line;
         annotation.end_column = annotation.start_column;
+        core.info('Updated annotation:', annotation);
       }
 
       try {
+        core.info('Second attempt at creating annotations');
         await createAnnotation(annotations, engineName, failOnError);
       }
       catch (finalError) {
