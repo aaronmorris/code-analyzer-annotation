@@ -20,7 +20,7 @@ async function createAnnotation(annotations, engineName, failOnError) {
     }
   });
 
-  core.info(`Annotation created with check value ${check}`);
+  core.info(`Annotation created with check value ${JSON.parse(JSON.stringify(check))}`);
 }
 
 async function readScannerResults() {
@@ -61,12 +61,13 @@ async function readScannerResults() {
 
         annotation.end_line = annotation.start_line;
         annotation.end_column = annotation.start_column;
-        core.info('Updated annotation:', annotation);
+        core.info('Updated annotation:', JSON.parse(JSON.stringify(annotation)));
       }
 
       try {
         core.info('Second attempt at creating annotations');
         await createAnnotation(annotations, engineName, failOnError);
+        core.info('Annotations created');
       }
       catch (finalError) {
         core.error(`Failed to created annotation for the ${engineName} Engine:\n${finalError.message}\nReview the artifacts for more information`);
