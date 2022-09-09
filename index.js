@@ -20,7 +20,7 @@ async function createAnnotation(annotations, engineName, failOnError) {
     }
   });
 
-  core.info(`Annotation created with check value ${JSON.parse(JSON.stringify(check))}`);
+  core.info(`Annotation created with check value ${JSON.stringify(check)}`);
 }
 
 async function readScannerResults() {
@@ -61,7 +61,7 @@ async function readScannerResults() {
 
         annotation.end_line = annotation.start_line;
         annotation.end_column = annotation.start_column;
-        core.info('Updated annotation:', JSON.parse(JSON.stringify(annotation)));
+        core.info('Updated annotation:', JSON.stringify(annotation));
       }
 
       try {
