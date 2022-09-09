@@ -23,6 +23,7 @@ async function createAnnotation(annotations, engineName, failOnError) {
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
+  core.info(core.getInput('json'));
   const json = JSON.parse(core.getInput('json'));
 
   for(let engine of json) {
