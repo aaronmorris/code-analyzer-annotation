@@ -5,6 +5,7 @@ const fs = require("fs");
 async function createAnnotation(annotations, engineName, failOnError) {
   const token = core.getInput('repo-token');
   const octokit = new github.getOctokit(token);
+  core.info('Attempting to create annotation');
   const check = await octokit.rest.checks.create({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
