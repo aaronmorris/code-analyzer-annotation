@@ -46,6 +46,7 @@ async function readScannerResults() {
     }
 
     try {
+      core.debug('tring to create annotation for ', annotations);
       await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
