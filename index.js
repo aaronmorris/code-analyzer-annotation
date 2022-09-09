@@ -18,6 +18,8 @@ async function createAnnotation(annotations, engineName, failOnError) {
       annotations: annotations
     }
   });
+
+  core.info(`Annotation created with check value ${check}`);
 }
 
 async function readScannerResults() {
