@@ -29,7 +29,8 @@ async function readScannerResults() {
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
   let json;
   try {
-    json = JSON.parse(core.getInput('json'));
+    // json = JSON.parse(core.getInput('json'));
+    json = [];
   }
   catch (error) {
     core.error('Error reading JSON: ' + error);
