@@ -36,7 +36,7 @@ async function readScannerResults() {
   }
 
   core.info('got pass json parse');
-  const showExtraLoggingInput = core.getInput('show-extra-logging')?.toLowerCase() == 'true' ? true : false;
+  const showExtraLoggingInput = core.getInput('show-extra-logging') === null ? false : core.getInput('show-extra-logging').toLowerCase() === 'true';
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
