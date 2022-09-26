@@ -26,7 +26,17 @@ async function createAnnotation(annotations, engineName, failOnError) {
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
-  const json = JSON.parse(core.getInput('json'));
+  let json;
+  try {
+    json = JSON.parse(core.getInput('json'));
+  }
+  catch (error) {
+    core.error(error);
+    return;
+  }
+
+  core.info('got pass json parse');
+  const showExtraLoggingInput = core.getInput('show-extra-logging')?.toLowerCase() == 'true' ? true : false;
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
@@ -47,15 +57,15 @@ async function readScannerResults() {
       };
 
       annotations.push(annotation);
-      core.info(annotation);
+      core.info(JSON.stringify(annotation));
     }
 
     try {
-      core.info('Trying to create annotation for ', annotations);
+      core.info(`Trying to create annotation for ${JSON.stringify(annotations)}`);
       await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
-      // core.warning(`Failed to create annotations on first attempt for the ${engineName} Engine.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.`);
+      core.warning(`Failed to create annotations on first attempt for the ${engineName} Engine.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.`);
       for (const annotation of annotations) {
         annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end line and end column values were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
