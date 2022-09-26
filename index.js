@@ -31,7 +31,7 @@ async function readScannerResults() {
     json = JSON.parse(core.getInput('json'));
   }
   catch (error) {
-    core.error(error);
+    core.error('Error loading json: ' + error);
     return;
   }
 
