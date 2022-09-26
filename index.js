@@ -94,6 +94,6 @@ async function readScannerResults() {
     await readScannerResults();
   }
   catch (error) {
-    core.setFailed(error.message);
+    core.error('Unable to run the process: ' + error.message);
   }
 })();
