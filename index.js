@@ -32,7 +32,7 @@ async function readScannerResults() {
   const fileName = core.getInput('path').toLowerCase();
   core.info('filename: ' + fileName);
   const fs = require("fs").promises;
-  var result = await fs.readFile(fileName, 'utf&');
+  var result = await fs.readFile(fileName, 'utf8');
   core.info('result: ' + result);
   let json;
   try {
