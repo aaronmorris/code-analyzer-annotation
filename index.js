@@ -1,5 +1,3 @@
-
-
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
@@ -29,15 +27,9 @@ async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
   const fileName = core.getInput('path').toLowerCase();
-  core.info('filename: ' + fileName);
   const fs = require("fs").promises;
   var result = await fs.readFile(fileName, 'utf8');
-  core.info('result: ' + result);
   const json = JSON.parse(result);
-
-
-  core.info('got pass json parse');
-  const showExtraLoggingInput = core.getInput('show-extra-logging') === null ? false : core.getInput('show-extra-logging').toLowerCase() === 'true';
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
@@ -58,7 +50,6 @@ async function readScannerResults() {
       };
 
       annotations.push(annotation);
-      core.info(JSON.stringify(annotation));
     }
 
     try {
@@ -85,8 +76,6 @@ async function readScannerResults() {
       }
     }
   }
-
-  core.info('end readScannerResults');
 }
 
 (async () => {
