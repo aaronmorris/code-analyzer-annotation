@@ -53,7 +53,6 @@ async function readScannerResults() {
     }
 
     try {
-      core.info(`Trying to create annotation for ${JSON.stringify(annotations)}`);
       await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
@@ -63,7 +62,6 @@ async function readScannerResults() {
 
         annotation.end_line = annotation.start_line;
         annotation.end_column = annotation.start_column;
-        core.info(`Updated annotation: ${JSON.stringify(annotation)}`);
       }
 
       try {
