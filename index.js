@@ -1,4 +1,5 @@
 
+
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
@@ -28,9 +29,15 @@ async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
   const fileName = core.getInput('path').toLowerCase();
+  core.info('filename: ' + fileName);
   const fs = require("fs").promises;
-  var fileContents = await fs.readFile(fileName, 'utf8');
-  const json = JSON.parse(fileContents);
+  var result = await fs.readFile(fileName, 'utf8');
+  core.info('result: ' + result);
+  const json = JSON.parse(result);
+
+
+  core.info('got pass json parse');
+  const showExtraLoggingInput = core.getInput('show-extra-logging') === null ? false : core.getInput('show-extra-logging').toLowerCase() === 'true';
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
@@ -51,6 +58,7 @@ async function readScannerResults() {
       };
 
       annotations.push(annotation);
+      core.info(JSON.stringify(annotation));
     }
 
     try {
@@ -64,12 +72,13 @@ async function readScannerResults() {
 
         annotation.end_line = annotation.start_line;
         annotation.end_column = annotation.start_column;
+        core.info(`Updated annotation: ${JSON.stringify(annotation)}`);
       }
 
       try {
         core.info('Second attempt at creating annotations');
         await createAnnotation(annotations, engineName, failOnError);
-
+        core.info('Annotations created');
       }
       catch (finalError) {
         core.error(`Failed to created annotation for the ${engineName} Engine:\n${finalError.message}\nReview the artifacts for more information`);
