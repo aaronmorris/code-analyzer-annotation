@@ -2,6 +2,8 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
 
+const maxAnnotations = 50;
+
 async function createAnnotation(annotations, engineName, failOnError) {
   const token = core.getInput('repo-token');
   const octokit = new github.getOctokit(token);
@@ -31,14 +33,21 @@ async function readScannerResults() {
   var result = await fs.readFile(fileName, 'utf8');
   const json = JSON.parse(result);
 
+  let annotationCount = 0;
+
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
     core.info(`Processing results for the ${engineName} engine.`);
     const fileName = engine.fileName;
     const annotations = [];
 
-    core.info(`${engine.violations.length} violation(s) for ${engineName}`)
+    core.info(`${engine.violations.length} violation(s) for ${engineName}`);
+
     for (let violation of engine.violations) {
+      if (annotationCount++ > this.maxAnnotations) {
+        core.error(`there were more than ${this.maxAnnotations} annotations so only the first ${this.maxAnnotations} are shown.`);
+        break;
+      }
       const annotation = {
         path: fileName,
         start_line: violation.line ? parseInt(violation.line) : 1,
@@ -70,7 +79,12 @@ async function readScannerResults() {
         core.info('Annotations created');
       }
       catch (finalError) {
-        core.error(`Failed to created annotation for the ${engineName} Engine:\n${finalError.message}\nReview the artifacts for more information`);
+        const errorMessage = `Failed to created annotation for the ${engineName} Engine:\n${finalError.message}\nReview the artifacts for more information`;
+        core.error(errorMessage);
+        if (failOnError) {
+          core.setFailed(errorMessage);
+          core.set
+        }
       }
     }
   }
