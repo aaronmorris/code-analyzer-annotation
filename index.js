@@ -97,6 +97,6 @@ async function readScannerResults() {
     await readScannerResults();
   }
   catch (error) {
-    core.setFailed(error.message);
+    core.setFailed('Failed to Execute Action: ' + error.message);
   }
 })();
