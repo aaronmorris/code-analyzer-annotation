@@ -12,7 +12,8 @@ async function createAnnotation(annotations, engineName, failOnError) {
     name: `${engineName} Violation`,
     head_sha: github.context.sha,
     status: 'completed',
-    conclusion: failOnError ? 'failure' : 'neutral',
+    // conclusion: failOnError ? 'failure' : 'neutral',
+    conclusion: 'failure',
     output: {
       title: `${engineName} Violation`,
       summary: `Please review the following ${engineName} Violation`,
