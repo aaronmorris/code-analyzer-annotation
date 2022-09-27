@@ -28,6 +28,7 @@ async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
   const fileName = core.getInput('path').toLowerCase();
+  const fs = require("fs").promises;
   var fileContents = await fs.readFile(fileName, 'utf8');
   const json = JSON.parse(fileContents);
 
@@ -68,6 +69,7 @@ async function readScannerResults() {
       try {
         core.info('Second attempt at creating annotations');
         await createAnnotation(annotations, engineName, failOnError);
+
       }
       catch (finalError) {
         core.error(`Failed to created annotation for the ${engineName} Engine:\n${finalError.message}\nReview the artifacts for more information`);
