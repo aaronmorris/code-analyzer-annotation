@@ -13,6 +13,10 @@ inputs:
     type: string
     description: path the results json file
     required: true
+  json:
+    type: string
+    description: json data from scanner results
+    required: true
   repo-token:
     type: string
     description: Github personal access token
