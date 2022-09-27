@@ -30,7 +30,7 @@ async function readScannerResults() {
   const fs = require("fs").promises;
   var result = await fs.readFile(fileName, 'utf8');
   const json = JSON.parse(result);
-  const jsonFromInput = JSON.parse(core.getInput('json'));
+  const jsonFromInput = core.getInput('json');
 
   const maxAnnotations = 50;
   let annotationCount = 1;
