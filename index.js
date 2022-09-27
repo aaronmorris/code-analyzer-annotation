@@ -34,15 +34,15 @@ async function readScannerResults() {
   const fs = require("fs").promises;
   var result = await fs.readFile(fileName, 'utf8');
   core.info('result: ' + result);
-  let json;
-  try {
-    // json = JSON.parse(core.getInput('json'));
-    json = testjson;
-  }
-  catch (error) {
-    core.error('Error loading json: ' + error);
-    return;
-  }
+  const json = JSON.parse(result);
+  // try {
+  //   // json = JSON.parse(core.getInput('json'));
+  //   json = testjson;
+  // }
+  // catch (error) {
+  //   core.error('Error loading json: ' + error);
+  //   return;
+  // }
 
   core.info('got pass json parse');
   const showExtraLoggingInput = core.getInput('show-extra-logging') === null ? false : core.getInput('show-extra-logging').toLowerCase() === 'true';
