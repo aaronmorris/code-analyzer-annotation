@@ -44,7 +44,7 @@ async function readScannerResults() {
 
     for (let violation of engine.violations) {
       if (annotationCount > maxAnnotations) {
-        core.warn(`there were more than ${maxAnnotations} annotations so only the first ${maxAnnotations} are shown.`);
+        core.warning(`there were more than ${maxAnnotations} annotations so only the first ${maxAnnotations} are shown.`);
         break;
       }
 
