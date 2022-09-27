@@ -85,7 +85,6 @@ async function readScannerResults() {
         core.error(errorMessage);
         if (failOnError) {
           core.setFailed(errorMessage);
-          core.set
         }
       }
     }
