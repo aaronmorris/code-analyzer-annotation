@@ -2,8 +2,6 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
 
-const maxAnnotations = 50;
-
 async function createAnnotation(annotations, engineName, failOnError) {
   const token = core.getInput('repo-token');
   const octokit = new github.getOctokit(token);
@@ -33,6 +31,7 @@ async function readScannerResults() {
   var result = await fs.readFile(fileName, 'utf8');
   const json = JSON.parse(result);
 
+  const maxAnnotations = 50;
   let annotationCount = 1;
 
   for(let engine of json) {
@@ -44,13 +43,13 @@ async function readScannerResults() {
     core.info(`${engine.violations.length} violation(s) for ${engineName}`);
 
     for (let violation of engine.violations) {
-      if (annotationCount > this.maxAnnotations) {
-        core.error(`there were more than ${this.maxAnnotations} annotations so only the first ${this.maxAnnotations} are shown.`);
+      if (annotationCount > maxAnnotations) {
+        core.error(`there were more than ${maxAnnotations} annotations so only the first ${maxAnnotations} are shown.`);
         break;
       }
       annotationCount++;
       core.info(annotationCount);
-      core.info(annotationCount < this.maxAnnotations);
+      core.info(annotationCount < maxAnnotations);
       const annotation = {
         path: fileName,
         start_line: violation.line ? parseInt(violation.line) : 1,
