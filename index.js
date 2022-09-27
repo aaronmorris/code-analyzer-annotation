@@ -33,7 +33,7 @@ async function readScannerResults() {
   var result = await fs.readFile(fileName, 'utf8');
   const json = JSON.parse(result);
 
-  let annotationCount = 0;
+  let annotationCount = 1;
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
@@ -44,10 +44,11 @@ async function readScannerResults() {
     core.info(`${engine.violations.length} violation(s) for ${engineName}`);
 
     for (let violation of engine.violations) {
-      if (annotationCount++ > this.maxAnnotations) {
+      if (annotationCount > this.maxAnnotations) {
         core.error(`there were more than ${this.maxAnnotations} annotations so only the first ${this.maxAnnotations} are shown.`);
         break;
       }
+      annotationCount++;
       core.info(annotationCount);
       core.info(annotationCount < this.maxAnnotations);
       const annotation = {
