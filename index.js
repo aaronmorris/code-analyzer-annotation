@@ -48,6 +48,8 @@ async function readScannerResults() {
         core.error(`there were more than ${this.maxAnnotations} annotations so only the first ${this.maxAnnotations} are shown.`);
         break;
       }
+      core.info(annotationCount);
+      core.info(annotationCount < this.maxAnnotations);
       const annotation = {
         path: fileName,
         start_line: violation.line ? parseInt(violation.line) : 1,
