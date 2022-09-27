@@ -12,7 +12,7 @@ inputs:
   path:
     type: string
     description: path the results json file
-    required: true
+    required: false
   json:
     type: string
     description: json data from scanner results
