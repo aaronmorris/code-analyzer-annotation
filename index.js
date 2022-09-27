@@ -29,6 +29,11 @@ async function createAnnotation(annotations, engineName, failOnError) {
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
+  const fileName = core.getInput('path').toLowerCase();
+  core.info('filename: ' + fileName);
+  const fs = require("fs").promises;
+  var result = await fs.readFile(fileName, 'utf&');
+  core.info('result: ' + result);
   let json;
   try {
     // json = JSON.parse(core.getInput('json'));
