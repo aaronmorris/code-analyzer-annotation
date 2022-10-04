@@ -13,7 +13,6 @@ async function createAnnotation(annotations, engineName, failOnError) {
     head_sha: github.context.sha,
     status: 'completed',
     conclusion: failOnError ? 'failure' : 'neutral',
-    // conclusion: 'failure',
     output: {
       title: `${engineName} Violation`,
       summary: `Please review the following ${engineName} Violation`,
@@ -31,7 +30,6 @@ async function readScannerResults() {
   const fs = require("fs").promises;
   var result = await fs.readFile(fileName, 'utf8');
   const json = JSON.parse(result);
-  const jsonFromInput = core.getInput('json');
 
   const maxAnnotations = 50;
   let annotationCount = 1;
@@ -46,12 +44,11 @@ async function readScannerResults() {
 
     for (let violation of engine.violations) {
       if (annotationCount > maxAnnotations) {
-        core.warning(`there were more than ${maxAnnotations} annotations so only the first ${maxAnnotations} are shown.`);
+        core.warning(`There were more than ${maxAnnotations} annotations for the ${engineName} enginew, so only the first ${maxAnnotations} are shown.  Please review the scan-results artifact for more information.`);
         break;
       }
 
       annotationCount++;
-      core.info('annotationCount: ' + annotationCount);
 
       const annotation = {
         path: fileName,
