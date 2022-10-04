@@ -2,20 +2,54 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require("fs");
 
+async function createAnnotation(annotations, engineName, failOnError) {
+  const token = core.getInput('repo-token');
+  const octokit = new github.getOctokit(token);
+  core.info('Attempting to create annotation');
+  const check = await octokit.rest.checks.create({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    name: `${engineName} Violation`,
+    head_sha: github.context.sha,
+    status: 'completed',
+    conclusion: failOnError ? 'failure' : 'neutral',
+    output: {
+      title: `${engineName} Violation`,
+      summary: `Please review the following ${engineName} Violation`,
+      annotations: annotations
+    }
+  });
+
+  core.info(`Annotation created with check value ${JSON.stringify(check)}`);
+}
+
 async function readScannerResults() {
   // booleans still come across as strings so convert to an actual boolean
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
-  const token = core.getInput('repo-token');
-  const json = JSON.parse(core.getInput('json'));
+  const fileName = core.getInput('path').toLowerCase();
+  const fs = require("fs").promises;
+  var result = await fs.readFile(fileName, 'utf8');
+  const json = JSON.parse(result);
 
-  const octokit = new github.getOctokit(token);
+  const maxAnnotations = 50;
+  let annotationCount = 1;
 
   for(let engine of json) {
     const engineName = engine.engine.toUpperCase();
+    core.info(`Processing results for the ${engineName} engine.`);
     const fileName = engine.fileName;
     const annotations = [];
 
+    core.info(`${engine.violations.length} violation(s) for ${engineName}`);
+
     for (let violation of engine.violations) {
+      if (annotationCount > maxAnnotations) {
+        core.warning(`There were more than ${maxAnnotations} annotations for the ${engineName} enginew, so only the first ${maxAnnotations} are shown.  Please review the scan-results artifact for more information.`);
+        break;
+      }
+
+      annotationCount++;
+
       const annotation = {
         path: fileName,
         start_line: violation.line ? parseInt(violation.line) : 1,
@@ -30,22 +64,11 @@ async function readScannerResults() {
     }
 
     try {
-      const check = await octokit.rest.checks.create({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        name: `${engineName} Violation`,
-        head_sha: github.context.sha,
-        status: 'completed',
-        conclusion: failOnError ? 'failure' : 'neutral',
-        output: {
-          title: `${engineName} Violation`,
-          summary: `Please review the following ${engineName} Violation`,
-          annotations: annotations
-        }
-      });
+      core.info('Create Annotation for ' + engineName);
+      await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
-      core.error('Failed to create annotations.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.');
+      core.warning(`Failed to create annotations on first attempt for the ${engineName} Engine.  This is usually due to the line and column numbers returned from the report.  The values will be modified and a second attempt will be made.`);
       for (const annotation of annotations) {
         annotation.message = `${annotation.message}\n\nThere was an issue with the line details of the annotation so the end line and end column values were modified.\nOriginal Values:\nStart Line: ${annotation.start_line}\nEnd Line: ${annotation.end_line}\nStart Column: ${annotation.start_column}\nEnd Column: ${annotation.end_column}\n`;
 
@@ -54,27 +77,19 @@ async function readScannerResults() {
       }
 
       try {
-        const check = await octokit.rest.checks.create({
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          name: `${engineName} Violation`,
-          head_sha: github.context.sha,
-          status: 'completed',
-          conclusion: failOnError ? 'failure' : 'neutral',
-          output: {
-            title: `${engineName} Violation`,
-            summary: `Please review the following ${engineName} Violation`,
-            annotations: annotations
-          }
-        });
+        core.info('Second attempt at creating annotations');
+        await createAnnotation(annotations, engineName, failOnError);
+        core.info('Annotations created');
       }
       catch (finalError) {
-        core.error('Failed to created annotation: ' + finalError.message);
+        const errorMessage = `Failed to created annotation for the ${engineName} Engine:\n${finalError.message}\nReview the artifacts for more information`;
+        core.error(errorMessage);
+        if (failOnError) {
+          core.setFailed(errorMessage);
+        }
       }
     }
   }
-
-  core.info('end readScannerResults');
 }
 
 (async () => {
@@ -82,6 +97,6 @@ async function readScannerResults() {
     await readScannerResults();
   }
   catch (error) {
-    core.setFailed(error.message);
+    core.setFailed('Failed to Execute Action: ' + error.message);
   }
 })();
