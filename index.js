@@ -51,6 +51,7 @@ async function readScannerResults() {
       }
 
       annotationCount++;
+      core.info('annotationCount: ' + annotationCount);
 
       const annotation = {
         path: fileName,
@@ -66,6 +67,7 @@ async function readScannerResults() {
     }
 
     try {
+      core.info('Create Annotation for ' + engineName);
       await createAnnotation(annotations, engineName, failOnError);
     }
     catch(error){
