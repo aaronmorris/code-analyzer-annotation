@@ -19,5 +19,9 @@
   "dependencies": {
     "@actions/core": "^1.7.0",
     "@actions/github": "^5.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-plugin-react": "^7.32.2"
   }
 }

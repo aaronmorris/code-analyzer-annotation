@@ -6,7 +6,7 @@ runs:
 inputs:
   fail-on-error:
     type: boolean
-    description: Indicate whether to have a failure annotation when there are rrors
+    description: Indicate whether to have a failure annotation when there are errors
     required: true
     default: true
   path:
