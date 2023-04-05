@@ -32,7 +32,7 @@ async function readScannerResults() {
   const fs = require("fs").promises;
   // var result = await fs.readFile(fileName, 'utf8');
   // TODO: For testing only
-  var result = JSON.serialize(testData);
+  var result = JSON.stringify(testData);
   const json = JSON.parse(result);
 
   const maxAnnotations = 50;
