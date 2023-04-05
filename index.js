@@ -28,9 +28,9 @@ async function readScannerResults() {
   const failOnError = core.getInput('fail-on-error').toLowerCase() === 'true' ? true : false;
   const fileName = core.getInput('path').toLowerCase();
   const fs = require("fs").promises;
-  var result = await fs.readFile(fileName, 'utf8');
+  // var result = await fs.readFile(fileName, 'utf8');
   // TODO: For testing only
-  result = JSON.serialize(testData);
+  var result = JSON.serialize(testData);
   const json = JSON.parse(result);
 
   const maxAnnotations = 50;
